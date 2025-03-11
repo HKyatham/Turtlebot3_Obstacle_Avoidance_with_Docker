@@ -1,50 +1,52 @@
-# **TurtleBot3 Obstacle Avoidance using Docker and ROS2 Humble**
+# **TurtleBot3 Obstacle Avoidance Using Docker and ROS2 Humble**  
 
-## **Overview**
-This repository provides the procedure to execute a simple LiDAR-based obstacle-avoiding TurtleBot3 using ROS2 Humble.
+## **Overview**  
+This repository provides a step-by-step guide to executing a **LiDAR-based obstacle avoidance** algorithm for the TurtleBot3 using **ROS2 Humble** within a **Docker environment**.  
 
-The algorithm runs within a Docker image, ensuring scalability and efficiency. This approach allows seamless execution on any Ubuntu or Windows system (via WSL).
+Running ROS2 inside Docker ensures **scalability, portability, and ease of deployment**, allowing seamless execution on **Ubuntu** and **Windows (via WSL)** without additional system configuration.  
 
 ---
 
-## **Installation and Execution Steps**
+## **Installation and Execution**  
 
-### **1. Setup and Build the Docker Image**
-1. Ensure **Docker** is installed on your system.
-2. Clone the repository using the following command:
+### **1. Setting Up and Building the Docker Image**  
+1. **Ensure Docker is installed** on your system. If not, install it from [Docker’s official website](https://www.docker.com/get-started).  
+2. **Clone this repository** by running the following command:  
    ```bash
    git clone https://github.com/HKyatham/Turtlebot3_Obstacle_Avoidance_with_Docker.git
    ```
-3. Navigate to the cloned repository:
+3. **Navigate to the cloned repository**:  
    ```bash
-   cd Turtlebot3-Obstacle-Avoidance-ROS2
+   cd Turtlebot3_Obstacle_Avoidance_with_Docker
    ```
-4. Build the Docker image using the following command:
+4. **Build the Docker image** using the command below:  
    ```bash
-   docker build . -t <name>
+   docker build . -t <image_name>
    ```
-   - This command uses the `Dockerfile` in the directory to build an image with the specified `<name>`.
+   - Replace `<image_name>` with a desired name for the Docker image.  
+   - The **Dockerfile** in the repository will automatically set up the ROS2 environment and dependencies.  
 
-5. Verify if the Docker image was successfully created:
+5. **Verify the Docker image creation**:  
    ```bash
    docker images
    ```
+   This will list all available Docker images on your system.  
 
-6. Run the Docker container using the following command:
+6. **Run the Docker container**:  
    ```bash
-   docker run -it --env="DISPLAY=${DISPLAY}" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" <name>
+   docker run -it --env="DISPLAY=${DISPLAY}" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" <image_name>
    ```
-   - This command triggers the ROS2 launch file inside the container.
-   - Replace `<name>` with the name of the container specified earlier.
+   - This command runs the ROS2 launch file inside the Docker container.  
+   - Replace `<image_name>` with the name specified earlier.  
 
 ---
 
-## **Running Only the TurtleBot3 with Manual Control (Teleoperation)**
+## **Running the TurtleBot3 with Manual Control (Teleoperation)**  
 
-If you want to run only the TurtleBot3 simulation and control it manually using teleoperation, follow these steps:
+If you want to control the TurtleBot3 **manually** instead of using autonomous obstacle avoidance, follow these steps:  
 
-### **1. Modify the Dockerfile**
-- Edit the `Dockerfile` and **remove** the following `ENTRYPOINT` line:
+### **1. Modify the Dockerfile**  
+- Open the **Dockerfile** and remove the following `ENTRYPOINT` line:  
   ```bash
   ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/humble/setup.bash && \
       source /ros_ws/install/setup.bash && \
@@ -53,46 +55,81 @@ If you want to run only the TurtleBot3 simulation and control it manually using 
       ros2 launch enpm_turtlebot3_project new_world.launch.py"]
   ```
 
-### **2. Remove Existing Docker Images (If Any)**
-- Check if a Docker image with the same name already exists:
+### **2. Remove Existing Docker Images (If Needed)**  
+- List existing Docker images:  
   ```bash
   docker images
   ```
-- If you want to remove an existing image:
+- If an image with the same name already exists and needs to be removed:  
   ```bash
-  docker rmi -f <name>:latest
+  docker rmi -f <image_name>:latest
   ```
 
-### **3. Rebuild the Docker Image**
-- Rebuild the image after modifying the `Dockerfile`:
+### **3. Rebuild the Docker Image**  
+- Rebuild the image after modifying the **Dockerfile**:  
   ```bash
-  docker build . -t <name>
+  docker build . -t <image_name>
   ```
 
-### **4. Run the Docker Container**
-- Execute the following command to run the container:
+### **4. Run the Docker Container**  
+- Start the Docker container:  
   ```bash
-  docker run -it --env="DISPLAY=${DISPLAY}" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" <name>
+  docker run -it --env="DISPLAY=${DISPLAY}" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" <image_name>
   ```
 
-### **5. Access the Running Docker Container**
-- Get the Docker container ID:
+### **5. Access the Running Docker Container**  
+- Find the running container ID:  
   ```bash
   docker ps
   ```
-- Open a new terminal inside the running container:
+- Open a new terminal inside the running container:  
   ```bash
   docker exec -it <container_id> bash
   ```
 
-### **6. Launch the Teleoperation Node**
-- Run the following ROS2 command inside the container to control the TurtleBot3 manually:
+### **6. Launch the Teleoperation Node**  
+- Run the following ROS2 command inside the container to manually control the TurtleBot3:  
   ```bash
   ros2 run enpm_turtlebot3_project turtlebot_teleop.py
   ```
 
 ---
 
-## **References**
-1. **Gazebo Simulation Tutorials**: [TurtleBot3 Simulation Documentation](https://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/)
-2. **TurtleBot3 Teleoperation**: [GitHub Repository](https://github.com/ROBOTIS-GIT/turtlebot3/tree/humble-devel/turtlebot3_teleop)
+## **Running the Autonomous Behaviors**  
+
+### **1. Running the Tunable Parameter Behavior**  
+This behavior allows real-time control of the robot's velocity using keyboard inputs. Below commands have to be executed after executing steps 1~4 in manual operation. 
+
+- **Launch the simulation**:  
+  ```bash
+  ros2 launch enpm_turtlebot3_project new_world.launch.py
+  ```
+- **In a new terminal, start the velocity publisher node**:  
+  ```bash
+  ros2 run enpm_turtlebot3_project lin_vel_publisher
+  ```
+- Press **‘w’** to increase speed and **‘s’** to decrease speed.
+
+---
+
+### **2. Running the A\* Path Planning Behavior**  
+This behavior enables path planning using the **A\* algorithm**, guiding the TurtleBot3 to navigate through a maze. Below commands have to be executed after executing steps 1~4 in manual operation.
+
+- **Launch the simulation**:  
+  ```bash
+  ros2 launch enpm_turtlebot3_project astar_maze_navigation.launch.py
+  ```
+- **In a new terminal, start the A\* navigation node**:  
+  ```bash
+  ros2 run enpm_turtlebot3_project control.py
+  ```
+
+---
+
+## **References**  
+1. **Gazebo Simulation Tutorials**: [TurtleBot3 Simulation Documentation](https://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/)  
+2. **TurtleBot3 Teleoperation**: [Official GitHub Repository](https://github.com/ROBOTIS-GIT/turtlebot3/tree/humble-devel/turtlebot3_teleop)  
+
+---
+
+This guide ensures a smooth setup and execution of **TurtleBot3 obstacle avoidance and navigation behaviors** using **Docker and ROS2 Humble**. 🚀
