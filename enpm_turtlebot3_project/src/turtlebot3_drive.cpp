@@ -51,6 +51,8 @@ Turtlebot3Drive::Turtlebot3Drive()
       std::placeholders::_1));
   odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
     "odom", qos, std::bind(&Turtlebot3Drive::odom_callback, this, std::placeholders::_1));
+  lin_vel_sub_ = this->create_subscription<std_msgs::msg::Float32>(
+    "/lin_vel", qos, std::bind(&Turtlebot3Drive::lin_vel_callback, this, std::placeholders::_1));
 
   /************************************************************
   ** Initialise ROS timers
@@ -93,6 +95,22 @@ void Turtlebot3Drive::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr
       scan_data_[num] = msg->ranges.at(scan_angle[num]);
     }
   }
+}
+
+void Turtlebot3Drive::lin_vel_callback(const std_msgs::msg::Float32::SharedPtr msg)
+{
+  double received_velocity = msg->data;
+
+  // Ensure velocity remains within limits
+  if (received_velocity > MAX_LINEAR_VELOCITY) {
+    linear_velocity_ = MAX_LINEAR_VELOCITY;
+  } else if (received_velocity < MIN_LINEAR_VELOCITY) {
+    linear_velocity_ = MIN_LINEAR_VELOCITY;
+  } else {
+    linear_velocity_ = received_velocity;
+  }
+
+  RCLCPP_INFO(this->get_logger(), "Updated Linear Velocity: %.2f", linear_velocity_);
 }
 
 void Turtlebot3Drive::update_cmd_vel(double linear, double angular)
@@ -138,7 +156,7 @@ void Turtlebot3Drive::update_callback()
       break;
 
     case TB3_DRIVE_FORWARD:
-      update_cmd_vel(LINEAR_VELOCITY, 0.0);
+      update_cmd_vel(linear_velocity_, 0.0);
       turtlebot3_state_num = GET_TB3_DIRECTION;
       break;
 

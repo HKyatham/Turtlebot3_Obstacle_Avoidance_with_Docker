@@ -18,6 +18,7 @@
 #define TURTLEBOT3_GAZEBO__TURTLEBOT3_DRIVE_HPP_
 
 #include <geometry_msgs/msg/twist.hpp>
+#include <std_msgs/msg/float32.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
@@ -31,7 +32,8 @@
 #define LEFT   1
 #define RIGHT  2
 
-#define LINEAR_VELOCITY  0.3
+#define MAX_LINEAR_VELOCITY 1.0
+#define MIN_LINEAR_VELOCITY 0.0
 #define ANGULAR_VELOCITY 1.5
 
 #define GET_TB3_DIRECTION 0
@@ -52,11 +54,13 @@ private:
   // ROS topic subscribers
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+  rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr lin_vel_sub_;
 
   // Variables
   double robot_pose_;
   double prev_robot_pose_;
   double scan_data_[3];
+  double linear_velocity_ = 0.5;
 
   // ROS timer
   rclcpp::TimerBase::SharedPtr update_timer_;
@@ -66,5 +70,7 @@ private:
   void update_cmd_vel(double linear, double angular);
   void scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
   void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg);
+  void lin_vel_callback(const std_msgs::msg::Float32::SharedPtr msg);
 };
 #endif  // TURTLEBOT3_GAZEBO__TURTLEBOT3_DRIVE_HPP_
+

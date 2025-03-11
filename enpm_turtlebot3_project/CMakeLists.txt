@@ -38,6 +38,9 @@ set(EXEC_NAME "turtlebot3_drive")
 add_executable(${EXEC_NAME} src/turtlebot3_drive.cpp)
 ament_target_dependencies(${EXEC_NAME} ${dependencies})
 
+add_executable(lin_vel_publisher src/lin_vel_publisher.cpp)
+ament_target_dependencies(lin_vel_publisher rclcpp std_msgs)
+
 # add_executable("velocity_pub" src/velocity_publisher.cpp)
 # ament_target_dependencies("velocity_pub" ${dependencies})
 
@@ -54,6 +57,10 @@ message(STATUS "Gazebo Include Dirs: ${GAZEBO_INCLUDE_DIRS}")
 
 
 install(TARGETS ${EXEC_NAME}
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(TARGETS lin_vel_publisher
   DESTINATION lib/${PROJECT_NAME}
 )
 
