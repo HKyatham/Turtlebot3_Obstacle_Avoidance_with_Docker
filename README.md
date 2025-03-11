@@ -129,7 +129,3 @@ This behavior enables path planning using the **A\* algorithm**, guiding the Tur
 ## **References**  
 1. **Gazebo Simulation Tutorials**: [TurtleBot3 Simulation Documentation](https://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/)  
 2. **TurtleBot3 Teleoperation**: [Official GitHub Repository](https://github.com/ROBOTIS-GIT/turtlebot3/tree/humble-devel/turtlebot3_teleop)  
-
----
-
-This guide ensures a smooth setup and execution of **TurtleBot3 obstacle avoidance and navigation behaviors** using **Docker and ROS2 Humble**. 🚀
