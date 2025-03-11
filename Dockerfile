@@ -4,7 +4,6 @@ FROM osrf/ros:humble-desktop-full
 SHELL [ "/bin/bash" , "-c" ]
 # Install packages
 RUN apt-get update && apt-get install -y \
-    terminator \
     ros-humble-gazebo-ros-pkgs \
     ros-humble-turtlebot3* \
     python3-colcon-common-extensions \
